@@ -45,13 +45,13 @@
     },
     "data": {
         "train": {
-            "batch_size": 4,
+            "batch_size": 8,
             "num_workers": 4,
             "datasets": [
                 {
                     "type": "LJspeechDataset",
                     "args": {
-                        "n_samples": 10239,
+                        "n_samples": 8191,
                         "part": "train"
                     }
                 }
