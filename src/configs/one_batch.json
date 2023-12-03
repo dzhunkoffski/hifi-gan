@@ -51,7 +51,7 @@
                 {
                     "type": "LJspeechDataset",
                     "args": {
-                        "n_samples": 8191,
+                        "n_samples": 16384,
                         "part": "train",
                         "limit": 10
                     }

@@ -55,7 +55,8 @@ class BaseDataset(Dataset):
         audio_path = data_dict["path"]
         audio_wave = self.load_audio(audio_path)
         if self.part == 'train':
-            audio_wave = audio_wave[:, :self.n_samples]
+            threshold = random.randint(0, audio_wave.size()[-1] - self.n_samples)
+            audio_wave = audio_wave[threshold, :threshold + self.n_samples]
         else:
             audio_wave = torch.nn.functional.pad(
                 input=audio_wave, pad=(0, self.max_audio_len - audio_wave.size()[-1]),
