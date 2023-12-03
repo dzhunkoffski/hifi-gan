@@ -15,7 +15,7 @@ class BaseTrainer:
     def __init__(
             self, model_generator: BaseModel, model_mpd: BaseModel, model_msd: BaseModel,
               criterion_generator, criterion_discriminator, metrics, 
-              optimizer_generator, optimizer_discriminator, config, device):
+              optimizer_generator, optimizer_discriminator, config, device, lr_scheduler_generator=None, lr_scheduler_discriminator=None):
         self.device = device
         self.config = config
         self.logger = config.get_logger("trainer", config["trainer"]["verbosity"])
@@ -29,6 +29,8 @@ class BaseTrainer:
         self.metrics = metrics
         self.optimizer_generator = optimizer_generator
         self.optimizer_discriminator = optimizer_discriminator
+        self.lr_scheduler_generator = lr_scheduler_generator
+        self.lr_scheduler_discriminator = lr_scheduler_discriminator
 
         # for interrupt saving
         self._last_epoch = 0
@@ -157,6 +159,8 @@ class BaseTrainer:
             "state_dict_msd": self.model_msd.state_dict(),
             "optimizer_generator": self.optimizer_generator.state_dict(),
             "optimizer_discriminator": self.optimizer_discriminator.state_dict(),
+            "lr_scheduler_generator": self.lr_scheduler_generator.state_dict(),
+            "lr_scheduler_discriminator": self.lr_scheduler_discriminator.state_dict(),
             "monitor_best": self.mnt_best,
             "config": self.config,
         }
@@ -182,24 +186,40 @@ class BaseTrainer:
         self.mnt_best = checkpoint["monitor_best"]
 
         # load architecture params from checkpoint.
-        if checkpoint["config"]["arch"] != self.config["arch"]:
+        if checkpoint["config"]["arch_generator"] != self.config["arch_generator"]:
             self.logger.warning(
                 "Warning: Architecture configuration given in config file is different from that "
                 "of checkpoint. This may yield an exception while state_dict is being loaded."
             )
-        self.model.load_state_dict(checkpoint["state_dict"])
+        if checkpoint["config"]["arch_mpd"] != self.config["arch_mpd"]:
+            self.logger.warning(
+                "Warning: Architecture configuration given in config file is different from that "
+                "of checkpoint. This may yield an exception while state_dict is being loaded."
+            )
+        if checkpoint["config"]["arch_msd"] != self.config["arch_msd"]:
+            self.logger.warning(
+                "Warning: Architecture configuration given in config file is different from that "
+                "of checkpoint. This may yield an exception while state_dict is being loaded."
+            )
+
+        self.model_generator.load_state_dict(checkpoint["state_dict_generator"])
+        self.model_mpd.load_state_dict(checkpoint["state_dict_mpd"])
+        self.model_msd.load_state_dict(checkpoint["state_dict_msd"])
 
         # load optimizer state from checkpoint only when optimizer type is not changed.
         if (
-                checkpoint["config"]["optimizer"] != self.config["optimizer"] or
-                checkpoint["config"]["lr_scheduler"] != self.config["lr_scheduler"]
+                checkpoint["config"]["optimizer_generator"] != self.config["optimizer_generator"] or
+                checkpoint["config"]["lr_scheduler_generator"] != self.config["lr_scheduler_generator"] or
+                checkpoint["config"]["optimizer_discriminator"] != self.config["optimizer_discriminator"] or
+                checkpoint["config"]["lr_scheduler_discriminator"] != self.config["lr_scheduler_discriminator"]
         ):
             self.logger.warning(
                 "Warning: Optimizer or lr_scheduler given in config file is different "
                 "from that of checkpoint. Optimizer parameters not being resumed."
             )
         else:
-            self.optimizer.load_state_dict(checkpoint["optimizer"])
+            self.optimizer_generator.load_state_dict(checkpoint["optimizer_generator"])
+            self.optimizer_discriminator.load_state_dict(checkpoint["optimizer_discriminator"])
 
         self.logger.info(
             "Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch)

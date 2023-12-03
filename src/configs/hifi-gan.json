@@ -152,6 +152,6 @@
         "visualize": "wandb",
         "wandb_project": "hifigan",
         "len_epoch": 1000,
-        "grad_norm_clip": 25
+        "grad_norm_clip": 750
     }
 }
