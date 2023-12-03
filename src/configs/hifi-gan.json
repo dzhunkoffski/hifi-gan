@@ -45,15 +45,14 @@
     },
     "data": {
         "train": {
-            "batch_size": 3,
+            "batch_size": 5,
             "num_workers": 4,
             "datasets": [
                 {
                     "type": "LJspeechDataset",
                     "args": {
                         "n_samples": 16383,
-                        "part": "train",
-                        "limit": 10
+                        "part": "train"
                     }
                 }
             ]
@@ -74,15 +73,19 @@
         }
     },
     "optimizer_generator": {
-        "type": "Adam",
+        "type": "AdamW",
         "args": {
-            "lr": 3e-4
+            "lr": 2e-4,
+            "weight_decay": 1e-2,
+            "betas": [0.8, 0.9]
         }
     },
     "optimizer_discriminator": {
-        "type": "Adam",
+        "type": "AdamW",
         "args": {
-            "lr": 3e-4
+            "lr": 2e-4,
+            "weight_decay": 1e-2,
+            "betas": [0.8, 0.9]
         }
     },
     "loss_generator": {
@@ -107,23 +110,15 @@
         "args": {}
     },
     "lr_scheduler_generator": {
-        "type": "OneCycleLR",
+        "type": "ExponentialLR",
         "args": {
-            "steps_per_epoch": 10,
-            "epochs": 100,
-            "anneal_strategy": "cos",
-            "max_lr": 3e-4,
-            "pct_start": 0.2
+            "gamma": 0.999
         }
     },
     "lr_scheduler_discriminator": {
-        "type": "OneCycleLR",
+        "type": "ExponentialLR",
         "args": {
-            "steps_per_epoch": 10,
-            "epochs": 100,
-            "anneal_strategy": "cos",
-            "max_lr": 3e-4,
-            "pct_start": 0.2
+            "gamma": 0.999
         }
     },
     "metrics": [
@@ -156,7 +151,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "hifigan",
-        "len_epoch": 10,
-        "grad_norm_clip": 100
+        "len_epoch": 1000,
+        "grad_norm_clip": 50
     }
 }
