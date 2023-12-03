@@ -67,7 +67,7 @@
                     "args": {
                         "part": "val",
                         "n_samples": 256,
-                        "audio_dir": "data/datasets/custom"
+                        "audio_dir": "custom"
                     }
                 }
             ]
