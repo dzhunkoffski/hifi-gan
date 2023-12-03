@@ -130,6 +130,11 @@ class Trainer(BaseTrainer):
             self.train_metrics.update("grad norm generator", self.get_grad_norm(model='generator'))
             self.train_metrics.update("grad norm mpd", self.get_grad_norm(model='mpd'))
             self.train_metrics.update("grad norm msd", self.get_grad_norm(model='msd'))
+            if self.lr_scheduler_discriminator is not None:
+                self.lr_scheduler_discriminator.step()
+            if self.lr_scheduler_generator is not None:
+                self.lr_scheduler_generator.step()
+            
             if batch_idx % self.log_step == 0:
                 self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
                 self.logger.debug(
@@ -175,8 +180,7 @@ class Trainer(BaseTrainer):
             self._clip_grad_norm(model='mpd')
             self._clip_grad_norm(model='msd')
             self.optimizer_discriminator.step()
-            if self.lr_scheduler_discriminator is not None:
-                self.lr_scheduler_discriminator.step()
+
         
         # Generator
         if is_train:
@@ -190,8 +194,6 @@ class Trainer(BaseTrainer):
             batch['loss_generator'].backward()
             self._clip_grad_norm(model='generator')
             self.optimizer_generator.step()
-            if self.lr_scheduler_generator is not None:
-                self.lr_scheduler_generator.step()
             
         metrics.update("loss_generator", batch['loss_generator'].item())
         metrics.update("loss_discriminator", batch['loss_discriminator'])
@@ -258,6 +260,7 @@ class Trainer(BaseTrainer):
             raw_audio = wandb.Audio(batch['wav_real'].squeeze(0).squeeze(0).cpu().numpy(), sample_rate=22050)
             rows[i] = {
                 "real audio": raw_audio,
+                "real mel": wandb.Image(self._log_spectrogram(batch['spectrogram'])),
                 "generated audio": gen_audio
             }
 
@@ -266,7 +269,7 @@ class Trainer(BaseTrainer):
     def _log_spectrogram(self, spectrogram_batch):
         spectrogram = random.choice(spectrogram_batch.cpu())
         image = PIL.Image.open(plot_spectrogram_to_buf(spectrogram))
-        self.writer.add_image("spectrogram", ToTensor()(image))
+        return image
 
     @torch.no_grad()
     def get_grad_norm(self, model: str, norm_type=2):

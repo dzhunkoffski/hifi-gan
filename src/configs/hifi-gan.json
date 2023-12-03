@@ -45,13 +45,13 @@
     },
     "data": {
         "train": {
-            "batch_size": 4,
+            "batch_size": 3,
             "num_workers": 2,
             "datasets": [
                 {
                     "type": "LJspeechDataset",
                     "args": {
-                        "n_samples": 8191,
+                        "n_samples": 12031,
                         "part": "train"
                     }
                 }
@@ -151,7 +151,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "hifigan",
-        "len_epoch": 500,
-        "grad_norm_clip": 50
+        "len_epoch": 1000,
+        "grad_norm_clip": 25
     }
 }
