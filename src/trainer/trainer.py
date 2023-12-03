@@ -130,10 +130,6 @@ class Trainer(BaseTrainer):
             self.train_metrics.update("grad norm generator", self.get_grad_norm(model='generator'))
             self.train_metrics.update("grad norm mpd", self.get_grad_norm(model='mpd'))
             self.train_metrics.update("grad norm msd", self.get_grad_norm(model='msd'))
-            if self.lr_scheduler_discriminator is not None:
-                self.lr_scheduler_discriminator.step()
-            if self.lr_scheduler_generator is not None:
-                self.lr_scheduler_generator.step()
             
             if batch_idx % self.log_step == 0:
                 self.writer.set_step((epoch - 1) * self.len_epoch + batch_idx)
@@ -159,6 +155,11 @@ class Trainer(BaseTrainer):
             if batch_idx >= self.len_epoch:
                 break
         log = last_train_metrics
+
+        if self.lr_scheduler_discriminator is not None:
+            self.lr_scheduler_discriminator.step()
+        if self.lr_scheduler_generator is not None:
+            self.lr_scheduler_generator.step()
 
         for part, dataloader in self.evaluation_dataloaders.items():
             val_log = self._evaluation_epoch(epoch, part, dataloader)
