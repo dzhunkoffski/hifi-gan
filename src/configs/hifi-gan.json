@@ -51,7 +51,7 @@
                 {
                     "type": "LJspeechDataset",
                     "args": {
-                        "n_samples": 16383,
+                        "n_samples": 10239,
                         "part": "train"
                     }
                 }
@@ -151,7 +151,7 @@
         "early_stop": 100,
         "visualize": "wandb",
         "wandb_project": "hifigan",
-        "len_epoch": 1000,
+        "len_epoch": 500,
         "grad_norm_clip": 50
     }
 }
