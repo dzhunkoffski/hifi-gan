@@ -1,0 +1,162 @@
+{
+    "name": "HiFi-GAN",
+    "n_gpu": 1,
+    "preprocessing": {
+        "sr": 22050,
+        "spectrogram": {
+            "type": "MelSpectrogram",
+            "args": {
+                "win_length": 1024,
+                "hop_length": 256,
+                "n_fft": 1024,
+                "f_min": 0,
+                "f_max": 8000,
+                "n_mels": 80,
+                "power": 1.0
+            }
+        },
+        "log_spec": true
+    },
+    "augmentations": {
+        "wave": [],
+        "specgtrogram": []
+    },
+    "arch_generator": {
+        "type": "Generator",
+        "args": {
+            "in_features": 80,
+            "k_u": [16, 16, 4, 4],
+            "h_u": 512,
+            "k_r": [3, 7, 11],
+            "D_r": [
+                [[1,1], [3,1], [5,1]],
+                [[1,1], [3,1], [5,1]],
+                [[1,1], [3,1], [5,1]]
+            ]
+        }
+    },
+    "arch_mpd": {
+        "type": "MPD",
+        "args": {}
+    },
+    "arch_msd": {
+        "type": "MSD",
+        "args": {}
+    },
+    "data": {
+        "train": {
+            "batch_size": 3,
+            "num_workers": 4,
+            "datasets": [
+                {
+                    "type": "LJspeechDataset",
+                    "args": {
+                        "n_samples": 8191,
+                        "part": "train",
+                        "limit": 10
+                    }
+                }
+            ]
+        },
+        "val": {
+            "batch_size": 1,
+            "num_workers": 4,
+            "datasets": [
+                {
+                    "type": "CustomDirAudioDataset",
+                    "args": {
+                        "part": "val",
+                        "n_samples": 256,
+                        "audio_dir": "data/datasets/custom"
+                    }
+                }
+            ]
+        }
+    },
+    "optimizer_generator": {
+        "type": "Adam",
+        "args": {
+            "lr": 3e-4
+        }
+    },
+    "optimizer_discriminator": {
+        "type": "Adam",
+        "args": {
+            "lr": 3e-4
+        }
+    },
+    "loss_generator": {
+        "type": "GLoss",
+        "args": {
+            "mel_config": {
+                "sample_rate": 22050,
+                "win_length": 1024,
+                "hop_length": 256,
+                "n_fft": 1024,
+                "f_min": 0,
+                "f_max": 8000,
+                "n_mels": 80,
+                "power": 1.0
+            },
+            "lambda_mel": 45,
+            "lambda_fm": 2
+        }
+    },
+    "loss_discriminator": {
+        "type": "DLoss",
+        "args": {}
+    },
+    "lr_scheduler_generator": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 10,
+            "epochs": 100,
+            "anneal_strategy": "cos",
+            "max_lr": 3e-4,
+            "pct_start": 0.2
+        }
+    },
+    "lr_scheduler_discriminator": {
+        "type": "OneCycleLR",
+        "args": {
+            "steps_per_epoch": 10,
+            "epochs": 100,
+            "anneal_strategy": "cos",
+            "max_lr": 3e-4,
+            "pct_start": 0.2
+        }
+    },
+    "metrics": [
+        {
+            "type": "MelMetric",
+            "args": {
+                "mel_config": {
+                    "sample_rate": 22050,
+                    "win_length": 1024,
+                    "hop_length": 256,
+                    "n_fft": 1024,
+                    "f_min": 0,
+                    "f_max": 8000,
+                    "n_mels": 80,
+                    "power": 1.0
+                }
+            }
+        },
+        {
+            "type": "FeatureMapMetric",
+            "args": {}
+        }
+    ],
+    "trainer": {
+        "epochs": 100,
+        "save_dir": "saved/",
+        "save_period": 5,
+        "verbosity": 1,
+        "monitor": "min val_loss_generator",
+        "early_stop": 100,
+        "visualize": "wandb",
+        "wandb_project": "hifigan",
+        "len_epoch": 10,
+        "grad_norm_clip": 100
+    }
+}
