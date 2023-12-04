@@ -62,6 +62,7 @@ class BaseTrainer:
             config, self.logger, cfg_trainer["visualize"]
         )
 
+        print(config.resume)
         if config.resume is not None:
             self._resume_checkpoint(config.resume)
 
