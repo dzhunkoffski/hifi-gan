@@ -75,7 +75,7 @@
     "optimizer_generator": {
         "type": "AdamW",
         "args": {
-            "lr": 2e-4,
+            "lr": 0.0001937,
             "weight_decay": 1e-2,
             "betas": [0.8, 0.9]
         }
@@ -83,7 +83,7 @@
     "optimizer_discriminator": {
         "type": "AdamW",
         "args": {
-            "lr": 2e-4,
+            "lr": 0.0001937,
             "weight_decay": 1e-2,
             "betas": [0.8, 0.9]
         }
