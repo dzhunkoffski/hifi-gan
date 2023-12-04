@@ -15,5 +15,4 @@ class FeatureLoss(nn.Module):
             for layer_g, layer_r in zip(d_g, d_r):
                 loss = loss + F.l1_loss(layer_g, layer_r)
 
-        # XXX: WHY (wtf with averaging)
-        return 2 * loss
+        return loss
