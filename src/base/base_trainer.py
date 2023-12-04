@@ -180,6 +180,7 @@ class BaseTrainer:
 
         :param resume_path: Checkpoint path to be resumed
         """
+        print('go resume')
         resume_path = str(resume_path)
         self.logger.info("Loading checkpoint: {} ...".format(resume_path))
         checkpoint = torch.load(resume_path, self.device)
