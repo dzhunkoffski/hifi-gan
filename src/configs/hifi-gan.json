@@ -75,7 +75,7 @@
     "optimizer_generator": {
         "type": "AdamW",
         "args": {
-            "lr": 0.0001937,
+            "lr": 2e-4,
             "weight_decay": 1e-2,
             "betas": [0.8, 0.9]
         }
@@ -83,7 +83,7 @@
     "optimizer_discriminator": {
         "type": "AdamW",
         "args": {
-            "lr": 0.0001937,
+            "lr": 2e-4,
             "weight_decay": 1e-2,
             "betas": [0.8, 0.9]
         }
@@ -152,6 +152,6 @@
         "visualize": "wandb",
         "wandb_project": "hifigan",
         "len_epoch": 1000,
-        "grad_norm_clip": 750
+        "grad_norm_clip": 25
     }
 }

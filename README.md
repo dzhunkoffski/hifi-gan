@@ -1,10 +1,9 @@
 # hifi-gan
 DL-AUDIO homework. HiFiGan implementation
 
-## Datasets
-Audio:
+Запустить обучение:
 ```bash
-wget https://data.keithito.com/data/speech/LJSpeech-1.1.tar.bz2 -o /dev/null --show-progress
-mkdir data
-tar -xvf LJSpeech-1.1.tar.bz2 >> /dev/null
-mv LJSpeech-1.1 data/LJSpeech-1.1
+python train.py --config src/configs/hifi-gan.json
+```
+
+В `requirements.txt` лежат все нужные пакеты с версиями, но можно смотреть в `hifigan_train.ipynb`, в котором запускается обучение через кагл и там вручную ставятся нужные библиотеки.
