@@ -1,9 +1,10 @@
 # hifi-gan
-DL-AUDIO homework. HiFiGan implementation
+DL-AUDIO homework. Implementation of the model called HiFi-GAN which uses a mel-spectrogram as input and upsamples it through transposed convolutions until the length of the output sequence matches the temporal resolution of raw waveforms. More details on model, train configuration and results examples located in wandb [report](https://wandb.ai/dzhunkoffski/hifigan/reports/Report-HIFI-GAN--Vmlldzo2NjU2Nzk4).
 
-Запустить обучение:
+## Train the model
 ```bash
 python train.py --config src/configs/hifi-gan.json
 ```
 
-В `requirements.txt` лежат все нужные пакеты с версиями, но можно смотреть в `hifigan_train.ipynb`, в котором запускается обучение через кагл и там вручную ставятся нужные библиотеки.
+## Run in Kaggle
+You can also use `hifigan_train.ipynb` notebook if you want to train model in kaggle.
